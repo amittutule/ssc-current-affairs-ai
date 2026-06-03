@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+groq
+openai
+pinecone
+beautifulsoup4
+requests
+feedparser
+reportlab
+gTTS

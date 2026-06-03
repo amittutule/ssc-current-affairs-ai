@@ -1,0 +1,30 @@
+# Local environments & dependencies
+node_modules/
+venv/
+.env
+backend/.env
+frontend/.env.local
+frontend/.env.production
+frontend/.env.development
+frontend/.env
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Python caching & static assets
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+app/static/latest_notes.pdf
+backend/app/static/latest_notes.pdf
+
+# OS files
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Thumbs.db
