@@ -10,3 +10,10 @@ requests
 feedparser
 reportlab
 gTTS
+langgraph
+langchain-core
+rank_bm25
+duckduckgo_search
+diskcache
+tiktoken
+
