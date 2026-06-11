@@ -15,11 +15,11 @@ st.set_page_config(
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 SESSIONS_FILE = "chat_sessions.json"
 
-# Embedded Base64 SVGs for Avatars (avoid file system path issues)
-ASSISTANT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDJDMTIgMiAxMi41IDguNSAxNS41IDExLjVDMTguNSAxNC41IDI0IDE1IDI0IDE1QzI0IDE1IDE4LjUgMTUuNSAxNS41IDE4LjVDMTIuNSAyMS41IDEyIDI0IDEyIDI0QzEyIDI0IDExLjUgMjEuNSA4LjUgMTguNUM1LjUgMTUuNSAwIDE1IDAgMTVDMCAxNSA1LjUgMTQuNSA4LjUgMTEuNUMxMS41IDguNSAxMiAyIDEyIDJaIiBmaWxsPSJ1cmwoI2dlbWluaS1ncmFkKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ2VtaW5pLWdyYWQiIHgxPSIwIiB5MT0iMCIgeDI9IjI0IiB5Mj0iMjQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOWI3MmNiIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiM0Mjg1ZjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkOTY1NzAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4="
+# Custom KarmaaFlow Gradient "K" Logo (Base64 SVG)
+ASSISTANT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9InVybCgja2YtZ3JhZCkiLz48cGF0aCBkPSJNOCA3VjE3TTggMTJIMTAuNUwxNC41IDdNMTAuNSAxMkwxNSAxNyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0ia2YtZ3JhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMjQiIHkyPSIyNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2MzY2ZjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNmI2ZDQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4="
 USER_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI0IiBmaWxsPSIjODA4NjhiIi8+PHBhdGggZD0iTTIwIDE5QzIwIDE1LjY4NjMgMTYuNDE4MyAxMyAxMiAxM0M3LjU4MTcyIDEzIDQgMTUuNjg2MyA0IDE5IiBzdHJva2U9IiM4MDg2OGIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+"
 
-# Inject Premium Gemini-style CSS Overrides
+# Inject Custom-branded Premium Layout Overrides
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
@@ -31,15 +31,22 @@ st.markdown("""
         color: #e3e3e3 !important;
     }
     
-    /* Hide default Streamlit elements */
-    #MainMenu {visibility: hidden;}
+    /* Style header and keep sidebar toggle button visible, but hide deploy and main menu */
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    [data-testid="stHeader"] [data-testid="stHeaderActionElements"] {
+        display: none !important;
+    }
+    #MainMenu {
+        display: none !important;
+    }
     footer {visibility: hidden;}
-    header {visibility: hidden;}
     
-    /* Center main content and give it Gemini width */
+    /* Center main content and give it modern layout width */
     .block-container {
         max-width: 820px !important;
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 7rem !important;
         margin: auto !important;
     }
@@ -51,10 +58,10 @@ st.markdown("""
     }
     
     /* Welcome Title layout */
-    .gemini-welcome-title {
+    .kf-welcome-title {
         font-size: 3.5rem !important;
         font-weight: 700 !important;
-        background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570) !important;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         margin-bottom: 0.1rem !important;
@@ -63,7 +70,7 @@ st.markdown("""
         line-height: 1.2 !important;
     }
     
-    .gemini-welcome-subtitle {
+    .kf-welcome-subtitle {
         font-size: 2.6rem !important;
         font-weight: 600 !important;
         color: #444746 !important;
@@ -72,7 +79,7 @@ st.markdown("""
         line-height: 1.2 !important;
     }
     
-    .gemini-desc {
+    .kf-desc {
         color: #80868b !important;
         font-size: 0.95rem !important;
         line-height: 1.6 !important;
@@ -80,7 +87,7 @@ st.markdown("""
         max-width: 600px !important;
     }
     
-    /* Gemini Suggestion Cards (Buttons inside columns in main body) */
+    /* Custom Suggestion Cards (Buttons inside columns in main body) */
     .block-container div[data-testid="column"] button {
         background-color: #1e1f20 !important;
         border: none !important;
@@ -105,6 +112,7 @@ st.markdown("""
     .block-container div[data-testid="column"] button:hover {
         background-color: #2e3032 !important;
         transform: translateY(-2px) !important;
+        border-left: 3px solid #6366f1 !important;
     }
     
     /* Hide default borders in layout columns */
@@ -125,7 +133,7 @@ st.markdown("""
     }
     
     div[data-testid="stChatInput"]:focus-within {
-        border-color: #4285f4 !important;
+        border-color: #6366f1 !important;
     }
     
     div[data-testid="stChatInput"] textarea {
@@ -134,7 +142,7 @@ st.markdown("""
         border: none !important;
         font-size: 1.05rem !important;
         line-height: 1.45 !important;
-        caret-color: #4285f4 !important;
+        caret-color: #6366f1 !important;
     }
     
     /* Message timeline borders & backgrounds */
@@ -172,7 +180,7 @@ st.markdown("""
     div[data-testid="stChatMessage"] button:hover {
         background-color: #2e3032 !important;
         color: #e3e3e3 !important;
-        border-color: #4285f4 !important;
+        border-color: #6366f1 !important;
     }
     
     /* Sidebar default button styling */
@@ -196,7 +204,7 @@ st.markdown("""
     
     [data-testid="stSidebar"] button:hover {
         background-color: #2b2c2e !important;
-        border-color: #4285f4 !important;
+        border-color: #6366f1 !important;
     }
     
     /* Recent chat list items (Buttons in the first column of sidebar rows) */
@@ -227,6 +235,7 @@ st.markdown("""
         background-color: #2d2f31 !important;
         color: #e3e3e3 !important;
         font-weight: 600 !important;
+        border-left: 2px solid #6366f1 !important;
     }
     
     /* Trash delete icon button (Buttons in the second column of sidebar rows) */
@@ -267,7 +276,7 @@ st.markdown("""
     
     [data-testid="stSidebar"] .sidebar-utility-button button:hover {
         background-color: #2d2f31 !important;
-        border-color: #4285f4 !important;
+        border-color: #6366f1 !important;
         color: #e3e3e3 !important;
     }
     
@@ -282,7 +291,7 @@ st.markdown("""
     
     .info-title {
         font-weight: 600 !important;
-        color: #4285f4 !important;
+        color: #6366f1 !important;
         font-size: 0.85rem !important;
         margin-bottom: 6px !important;
     }
@@ -445,16 +454,16 @@ def send_chat_message(prompt_text: str):
 
 # Landing page if session has 0 messages
 if not messages:
-    st.markdown('<h1 class="gemini-welcome-title">Hello, Scholar</h1>', unsafe_allow_html=True)
-    st.markdown('<h2 class="gemini-welcome-subtitle">How can I assist your prep today?</h2>', unsafe_allow_html=True)
+    st.markdown('<h1 class="kf-welcome-title">Hello, Scholar</h1>', unsafe_allow_html=True)
+    st.markdown('<h2 class="kf-welcome-subtitle">How can I assist your prep today?</h2>', unsafe_allow_html=True)
     st.markdown(
-        '<p class="gemini-desc">I am your AI Current Affairs Tutor for the SSC Exam. '
+        '<p class="kf-desc">I am your AI Current Affairs Tutor for the SSC Exam. '
         'I retrieve the latest news facts from our Vector Database and execute SQLite queries '
         'to help you learn and evaluate your knowledge dynamically.</p>',
         unsafe_allow_html=True
     )
     
-    # 4-column Suggestion Starters Grid (Gemini Style)
+    # 4-column Suggestion Starters Grid
     cols = st.columns(4)
     
     starters = [
