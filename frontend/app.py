@@ -363,7 +363,8 @@ st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # Voice Search STT Widget
 st.sidebar.markdown("<p style='color: #80868b; font-size: 0.75rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; letter-spacing: 0.05em;'>VOICE ASSIST</p>", unsafe_allow_html=True)
-st.sidebar.components.v1.html("""
+with st.sidebar:
+    st.components.v1.html("""
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 <style>
