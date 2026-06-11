@@ -361,6 +361,140 @@ if st.sidebar.button("➕ New Chat", use_container_width=True):
     st.rerun()
 st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
+# Voice Search STT Widget
+st.sidebar.markdown("<p style='color: #80868b; font-size: 0.75rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; letter-spacing: 0.05em;'>VOICE ASSIST</p>", unsafe_allow_html=True)
+st.sidebar.components.v1.html("""
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+<style>
+    .mic-container {
+        display: flex;
+        align-items: center;
+        background: #1a1a1c;
+        border: 1px solid #2d2f31;
+        border-radius: 20px;
+        padding: 8px 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .mic-container:hover {
+        background: #2b2c2e;
+        border-color: #6366f1;
+    }
+    .mic-container.listening {
+        background: #ef4444;
+        border-color: #ef4444;
+        animation: pulse 1.5s infinite;
+    }
+    .mic-icon {
+        font-size: 16px;
+        margin-right: 8px;
+        color: #e3e3e3;
+    }
+    .mic-text {
+        color: #c4c7c5;
+        font-size: 0.85rem;
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-weight: 500;
+        user-select: none;
+    }
+    .mic-container.listening .mic-text {
+        color: white;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+</style>
+
+<div class="mic-container" id="mic-container" onclick="toggleListening()">
+    <span class="mic-icon" id="mic-icon">🎙️</span>
+    <span class="mic-text" id="mic-text">Voice Input</span>
+</div>
+
+<script>
+let recognition = null;
+let isListening = false;
+
+function initSpeech() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        return;
+    }
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        try {
+            const textareas = window.parent.document.querySelectorAll('div[data-testid="stChatInput"] textarea');
+            if (textareas.length > 0) {
+                const ta = textareas[0];
+                ta.value = transcript;
+                ta.dispatchEvent(new Event('input', { bubbles: true }));
+                ta.focus();
+            }
+        } catch (e) {
+            console.error("Failed to write transcript", e);
+        }
+        stopListening();
+    };
+    
+    recognition.onerror = (e) => {
+        console.error(e);
+        stopListening();
+    };
+    
+    recognition.onend = () => {
+        stopListening();
+    };
+}
+
+function toggleListening() {
+    if (!recognition) {
+        initSpeech();
+    }
+    if (!recognition) {
+        alert("Voice recognition is not supported in this browser. Please use Chrome or Safari.");
+        return;
+    }
+    
+    const container = document.getElementById("mic-container");
+    const icon = document.getElementById("mic-icon");
+    const text = document.getElementById("mic-text");
+    
+    if (isListening) {
+        recognition.stop();
+        stopListening();
+    } else {
+        try {
+            recognition.start();
+            isListening = true;
+            container.classList.add("listening");
+            icon.innerText = "🛑";
+            text.innerText = "Listening...";
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
+function stopListening() {
+    isListening = false;
+    const container = document.getElementById("mic-container");
+    const icon = document.getElementById("mic-icon");
+    const text = document.getElementById("mic-text");
+    if (container) container.classList.remove("listening");
+    if (icon) icon.innerText = "🎙️";
+    if (text) text.innerText = "Voice Input";
+}
+</script>
+""", height=44)
+
 st.sidebar.markdown("<hr style='margin: 1.25rem 0; border-color: #2d2f31;' />", unsafe_allow_html=True)
 st.sidebar.markdown("<p style='color: #80868b; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: 0.05em;'>RECENT CHATS</p>", unsafe_allow_html=True)
 
