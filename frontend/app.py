@@ -15,96 +15,290 @@ st.set_page_config(
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 SESSIONS_FILE = "chat_sessions.json"
 
-# Inject Custom Gemini-style CSS
+# Embedded Base64 SVGs for Avatars (avoid file system path issues)
+ASSISTANT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEyIDJDMTIgMiAxMi41IDguNSAxNS41IDExLjVDMTguNSAxNC41IDI0IDE1IDI0IDE1QzI0IDE1IDE4LjUgMTUuNSAxNS41IDE4LjVDMTIuNSAyMS41IDEyIDI0IDEyIDI0QzEyIDI0IDExLjUgMjEuNSA4LjUgMTguNUM1LjUgMTUuNSAwIDE1IDAgMTVDMCAxNSA1LjUgMTQuNSA4LjUgMTEuNUMxMS41IDguNSAxMiAyIDEyIDJaIiBmaWxsPSJ1cmwoI2dlbWluaS1ncmFkKSIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ2VtaW5pLWdyYWQiIHgxPSIwIiB5MT0iMCIgeDI9IjI0IiB5Mj0iMjQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOWI3MmNiIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiM0Mjg1ZjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkOTY1NzAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4="
+USER_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI0IiBmaWxsPSIjODA4NjhiIi8+PHBhdGggZD0iTTIwIDE5QzIwIDE1LjY4NjMgMTYuNDE4MyAxMyAxMiAxM0M3LjU4MTcyIDEzIDQgMTUuNjg2MyA0IDE5IiBzdHJva2U9IiM4MDg2OGIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+"
+
+# Inject Premium Gemini-style CSS Overrides
 st.markdown("""
 <style>
-    /* Dark theme overrides */
-    .stApp {
-        background-color: #070913;
-        color: #e2e8f0;
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+    
+    /* Global font and background */
+    html, body, [class*="css"], .stApp {
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        background-color: #131314 !important;
+        color: #e3e3e3 !important;
     }
     
-    /* Hide Streamlit branding */
+    /* Hide default Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Main container width */
+    /* Center main content and give it Gemini width */
     .block-container {
-        max-width: 55rem;
-        padding-top: 3rem;
-        padding-bottom: 5rem;
-        margin: auto;
+        max-width: 820px !important;
+        padding-top: 2rem !important;
+        padding-bottom: 7rem !important;
+        margin: auto !important;
     }
     
     /* Sidebar styling */
     [data-testid="stSidebar"] {
-        background-color: #0c0e1a !important;
-        border-right: 1px solid #1e293b;
+        background-color: #1e1f20 !important;
+        border-right: 1px solid #2d2f31 !important;
     }
     
-    /* Custom welcome title gradient */
-    .gemini-title {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(90deg, #60a5fa, #818cf8, #c084fc);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.2rem;
+    /* Welcome Title layout */
+    .gemini-welcome-title {
+        font-size: 3.5rem !important;
+        font-weight: 700 !important;
+        background: linear-gradient(135deg, #4285f4, #9b72cb, #d96570) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        margin-bottom: 0.1rem !important;
+        margin-top: 3.5rem !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
     }
     
-    .gemini-subtitle {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #64748b;
-        margin-bottom: 1.5rem;
+    .gemini-welcome-subtitle {
+        font-size: 2.6rem !important;
+        font-weight: 600 !important;
+        color: #444746 !important;
+        margin-bottom: 2.5rem !important;
+        letter-spacing: -0.01em !important;
+        line-height: 1.2 !important;
     }
     
     .gemini-desc {
-        color: #94a3b8;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 2rem;
-        max-width: 38rem;
+        color: #80868b !important;
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 3.5rem !important;
+        max-width: 600px !important;
     }
     
-    /* Suggestion cards styling */
-    .suggestion-card {
-        background-color: #0c0e1a;
-        border: 1px solid #1e293b;
-        border-radius: 1rem;
-        padding: 1.25rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-        min-height: 7rem;
+    /* Gemini Suggestion Cards (Buttons inside columns in main body) */
+    .block-container div[data-testid="column"] button {
+        background-color: #1e1f20 !important;
+        border: none !important;
+        color: #e3e3e3 !important;
+        border-radius: 16px !important;
+        padding: 16px !important;
+        height: 140px !important;
+        text-align: left !important;
+        white-space: pre-line !important;
+        word-wrap: break-word !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        transition: all 0.25s ease !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        box-shadow: none !important;
+        line-height: 1.45 !important;
+        width: 100% !important;
     }
     
-    .suggestion-card:hover {
-        background-color: #13172a;
-        border-color: #4f46e5;
-        box-shadow: 0 4px 20px rgba(79, 70, 229, 0.15);
+    .block-container div[data-testid="column"] button:hover {
+        background-color: #2e3032 !important;
+        transform: translateY(-2px) !important;
     }
     
-    .suggestion-title {
-        font-weight: 600;
-        color: #f1f5f9;
-        font-size: 0.95rem;
-        margin-bottom: 0.4rem;
+    /* Hide default borders in layout columns */
+    [data-testid="column"] {
+        border: none !important;
     }
     
-    .suggestion-desc {
-        color: #64748b;
-        font-size: 0.8rem;
-        line-height: 1.4;
+    /* Chat Input design */
+    div[data-testid="stChatInput"] {
+        background-color: #1e1f20 !important;
+        border: 1px solid #2e3032 !important;
+        border-radius: 32px !important;
+        padding: 6px 16px !important;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+        max-width: 768px !important;
+        margin: 0 auto !important;
+        transition: border-color 0.2s ease !important;
     }
     
-    /* Disclaimer footer */
+    div[data-testid="stChatInput"]:focus-within {
+        border-color: #4285f4 !important;
+    }
+    
+    div[data-testid="stChatInput"] textarea {
+        background-color: transparent !important;
+        color: #e3e3e3 !important;
+        border: none !important;
+        font-size: 1.05rem !important;
+        line-height: 1.45 !important;
+        caret-color: #4285f4 !important;
+    }
+    
+    /* Message timeline borders & backgrounds */
+    div[data-testid="stChatMessage"] {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 1.5rem 0 !important;
+        border-bottom: 1px solid #2e3032 !important;
+    }
+    
+    div[data-testid="stChatMessage"] div.stMarkdown {
+        color: #e3e3e3 !important;
+        font-size: 1rem !important;
+        line-height: 1.65 !important;
+    }
+    
+    /* Custom TTS Pill button (Buttons inside chat messages) */
+    div[data-testid="stChatMessage"] button {
+        background-color: #1e1f20 !important;
+        border: 1px solid #2d2f31 !important;
+        color: #c4c7c5 !important;
+        border-radius: 20px !important;
+        padding: 4px 14px !important;
+        font-size: 0.78rem !important;
+        font-weight: 500 !important;
+        width: auto !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    div[data-testid="stChatMessage"] button:hover {
+        background-color: #2e3032 !important;
+        color: #e3e3e3 !important;
+        border-color: #4285f4 !important;
+    }
+    
+    /* Sidebar default button styling */
+    [data-testid="stSidebar"] button {
+        background-color: #1a1a1c !important;
+        border: 1px solid #2d2f31 !important;
+        color: #e3e3e3 !important;
+        border-radius: 24px !important;
+        padding: 10px 18px !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+        text-align: left !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    [data-testid="stSidebar"] button:hover {
+        background-color: #2b2c2e !important;
+        border-color: #4285f4 !important;
+    }
+    
+    /* Recent chat list items (Buttons in the first column of sidebar rows) */
+    [data-testid="stSidebar"] div[data-testid="column"]:first-child button {
+        background-color: transparent !important;
+        border: none !important;
+        color: #c4c7c5 !important;
+        text-align: left !important;
+        padding: 8px 12px !important;
+        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        display: block !important;
+        width: 100% !important;
+        text-overflow: ellipsis !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        font-weight: 400 !important;
+        box-shadow: none !important;
+    }
+    
+    [data-testid="stSidebar"] div[data-testid="column"]:first-child button:hover {
+        background-color: #2d2f31 !important;
+        color: #e3e3e3 !important;
+    }
+    
+    /* active chat highlight */
+    [data-testid="stSidebar"] .recent-chat-item-active button {
+        background-color: #2d2f31 !important;
+        color: #e3e3e3 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Trash delete icon button (Buttons in the second column of sidebar rows) */
+    [data-testid="stSidebar"] div[data-testid="column"]:last-child button {
+        background-color: transparent !important;
+        border: none !important;
+        color: #80868b !important;
+        border-radius: 50% !important;
+        padding: 4px !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.85rem !important;
+        box-shadow: none !important;
+    }
+    
+    [data-testid="stSidebar"] div[data-testid="column"]:last-child button:hover {
+        background-color: #2d2f31 !important;
+        color: #ea4335 !important;
+    }
+    
+    /* Sidebar utility buttons (Refresh, Download) */
+    [data-testid="stSidebar"] .sidebar-utility-button button {
+        background-color: transparent !important;
+        border: 1px solid #2d2f31 !important;
+        color: #c4c7c5 !important;
+        border-radius: 20px !important;
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    [data-testid="stSidebar"] .sidebar-utility-button button:hover {
+        background-color: #2d2f31 !important;
+        border-color: #4285f4 !important;
+        color: #e3e3e3 !important;
+    }
+    
+    /* Info box in sidebar */
+    .sidebar-info-box {
+        background-color: #1a1a1c !important;
+        border: 1px solid #2d2f31 !important;
+        border-radius: 16px !important;
+        padding: 14px !important;
+        margin-top: 20px !important;
+    }
+    
+    .info-title {
+        font-weight: 600 !important;
+        color: #4285f4 !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .info-text {
+        color: #c4c7c5 !important;
+        font-size: 0.78rem !important;
+        line-height: 1.45 !important;
+    }
+    
+    /* Disclaimer and footnotes */
     .disclaimer-text {
-        text-align: center;
-        color: #475569;
-        font-size: 0.75rem;
-        margin-top: 1.5rem;
+        text-align: center !important;
+        color: #444746 !important;
+        font-size: 0.75rem !important;
+        margin-top: 3rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -131,7 +325,6 @@ if "sessions" not in st.session_state:
     st.session_state.sessions = load_sessions()
 
 if "current_session_id" not in st.session_state:
-    # Set default or create new
     if st.session_state.sessions:
         st.session_state.current_session_id = list(st.session_state.sessions.keys())[0]
     else:
@@ -144,9 +337,10 @@ if "current_session_id" not in st.session_state:
         save_sessions(st.session_state.sessions)
 
 # 3. SIDEBAR NAVIGATION
-st.sidebar.markdown("<h3 style='color: #818cf8; margin-bottom: 1rem;'>✨ Options</h3>", unsafe_allow_html=True)
+st.sidebar.markdown("<h2 style='color: #e3e3e3; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;'>✨ KarmaaFlow AI</h2>", unsafe_allow_html=True)
 
 # Create a new session button
+st.sidebar.markdown('<div class="new-chat-btn-container">', unsafe_allow_html=True)
 if st.sidebar.button("➕ New Chat", use_container_width=True):
     new_id = str(int(time.time()))
     st.session_state.sessions[new_id] = {
@@ -156,40 +350,49 @@ if st.sidebar.button("➕ New Chat", use_container_width=True):
     st.session_state.current_session_id = new_id
     save_sessions(st.session_state.sessions)
     st.rerun()
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
-st.sidebar.markdown("<hr style='margin: 1rem 0; border-color: #1e293b;' />", unsafe_allow_html=True)
-st.sidebar.markdown("<p style='color: #475569; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;'>RECENT CHATS</p>", unsafe_allow_html=True)
+st.sidebar.markdown("<hr style='margin: 1.25rem 0; border-color: #2d2f31;' />", unsafe_allow_html=True)
+st.sidebar.markdown("<p style='color: #80868b; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem; letter-spacing: 0.05em;'>RECENT CHATS</p>", unsafe_allow_html=True)
 
 # List recent chat sessions
 for sess_id, sess_info in list(st.session_state.sessions.items()):
     col1, col2 = st.sidebar.columns([8, 2])
     
-    # Session switch button
-    active_style = "color: #818cf8; font-weight: 600;" if sess_id == st.session_state.current_session_id else "color: #94a3b8;"
-    if col1.button(f"💬 {sess_info['title']}", key=f"select_{sess_id}", use_container_width=True, type="secondary"):
-        st.session_state.current_session_id = sess_id
-        st.rerun()
+    # Active state check
+    is_active = (sess_id == st.session_state.current_session_id)
+    active_class = "recent-chat-item-active" if is_active else "recent-chat-item"
+    btn_label = f"💬 {sess_info['title']}"
+    
+    with col1:
+        st.markdown(f'<div class="{active_class}">', unsafe_allow_html=True)
+        if st.button(btn_label, key=f"select_{sess_id}", use_container_width=True):
+            st.session_state.current_session_id = sess_id
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
         
-    # Delete button
-    if col2.button("🗑️", key=f"del_{sess_id}", help="Delete chat"):
-        del st.session_state.sessions[sess_id]
-        save_sessions(st.session_state.sessions)
-        
-        # If deleted active, reset
-        if st.session_state.current_session_id == sess_id:
-            if st.session_state.sessions:
-                st.session_state.current_session_id = list(st.session_state.sessions.keys())[0]
-            else:
-                new_id = str(int(time.time()))
-                st.session_state.sessions[new_id] = {"title": "New Chat", "messages": []}
-                st.session_state.current_session_id = new_id
-                save_sessions(st.session_state.sessions)
-        st.rerun()
+    with col2:
+        st.markdown('<div class="recent-chat-delete">', unsafe_allow_html=True)
+        if st.button("🗑️", key=f"del_{sess_id}", help="Delete chat"):
+            del st.session_state.sessions[sess_id]
+            save_sessions(st.session_state.sessions)
+            
+            if st.session_state.current_session_id == sess_id:
+                if st.session_state.sessions:
+                    st.session_state.current_session_id = list(st.session_state.sessions.keys())[0]
+                else:
+                    new_id = str(int(time.time()))
+                    st.session_state.sessions[new_id] = {"title": "New Chat", "messages": []}
+                    st.session_state.current_session_id = new_id
+                    save_sessions(st.session_state.sessions)
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
-# Operations segment at the bottom of the sidebar
-st.sidebar.markdown("<hr style='margin: 1.5rem 0; border-color: #1e293b;' />", unsafe_allow_html=True)
+# Controls at the bottom
+st.sidebar.markdown("<hr style='margin: 1.5rem 0; border-color: #2d2f31;' />", unsafe_allow_html=True)
 
 # Ingest refresh trigger
+st.sidebar.markdown('<div class="sidebar-utility-button">', unsafe_allow_html=True)
 if st.sidebar.button("🔄 Refresh News", use_container_width=True):
     with st.sidebar.status("Scraping news in background..."):
         try:
@@ -200,11 +403,13 @@ if st.sidebar.button("🔄 Refresh News", use_container_width=True):
                 st.sidebar.error("Failed to trigger ingestion.")
         except Exception as e:
             st.sidebar.error(f"Connection error: {e}")
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # Download daily PDF
 try:
     pdf_res = requests.get(f"{BACKEND_URL}/api/media/pdf", timeout=2)
     if pdf_res.status_code == 200:
+        st.sidebar.markdown('<div class="sidebar-utility-button" style="margin-top: 10px;">', unsafe_allow_html=True)
         st.sidebar.download_button(
             label="📥 Download Daily PDF",
             data=pdf_res.content,
@@ -212,29 +417,36 @@ try:
             mime="application/pdf",
             use_container_width=True
         )
+        st.sidebar.markdown('</div>', unsafe_allow_html=True)
 except Exception:
     pass
+
+# Helper info box to explain the "No context" behavior
+st.sidebar.markdown("""
+<div class="sidebar-info-box">
+    <div class="info-title">💡 Ingest Tip</div>
+    <div class="info-text">
+        If the AI reports missing news context, click <b>Refresh News</b> to fetch today's current affairs and sync the database!
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 
 # 4. CHAT INTERACTIVE LOGIC
 active_session = st.session_state.sessions[st.session_state.current_session_id]
 messages = active_session["messages"]
 
-# RAG question handler
 def send_chat_message(prompt_text: str):
-    # Append user message
     messages.append({"role": "user", "content": prompt_text})
-    
-    # Update title from first prompt
     if active_session["title"] == "New Chat":
         active_session["title"] = prompt_text[:25] + "..." if len(prompt_text) > 25 else prompt_text
-        
     save_sessions(st.session_state.sessions)
     st.rerun()
 
 # Landing page if session has 0 messages
 if not messages:
-    st.markdown('<h1 class="gemini-title">Hello, Scholar</h1>', unsafe_allow_html=True)
-    st.markdown('<h2 class="gemini-subtitle">How can I assist your prep today?</h2>', unsafe_allow_html=True)
+    st.markdown('<h1 class="gemini-welcome-title">Hello, Scholar</h1>', unsafe_allow_html=True)
+    st.markdown('<h2 class="gemini-welcome-subtitle">How can I assist your prep today?</h2>', unsafe_allow_html=True)
     st.markdown(
         '<p class="gemini-desc">I am your AI Current Affairs Tutor for the SSC Exam. '
         'I retrieve the latest news facts from our Vector Database and execute SQLite queries '
@@ -242,41 +454,32 @@ if not messages:
         unsafe_allow_html=True
     )
     
-    # 2x2 Suggestion Starters Grid
-    cols = st.columns(2)
+    # 4-column Suggestion Starters Grid (Gemini Style)
+    cols = st.columns(4)
     
     starters = [
         ("Summarize News", "Get a factual bullet-point summary of today's key updates.", "Summarize today's major news and current affairs."),
         ("Daily Quiz", "Evaluate your readiness with a 5-question multiple choice test.", "Generate a 5-question current affairs quiz based on the latest news."),
         ("Economic Reforms", "Explain policy changes, budget points, and reforms.", "Explain the key economic reforms and policy changes from today's news."),
-        ("SSC CGL Strategy", "Get a study roadmap and tips for current affairs.", "Provide a study plan and strategy to prepare current affairs for the SSC CGL exam.")
+        ("SSC CGL Strategy", "Get a study roadmap and preparation tips.", "Provide a study plan and strategy to prepare current affairs for the SSC CGL exam.")
     ]
     
     for i, (title, desc, prompt) in enumerate(starters):
-        col_idx = i % 2
-        with cols[col_idx]:
-            # Renders card container + trigger button
-            st.markdown(f"""
-            <div class="suggestion-card">
-                <div class="suggestion-title">✨ {title}</div>
-                <div class="suggestion-desc">{desc}</div>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button(f"Try: \"{title}\"", key=f"starter_btn_{i}", use_container_width=True):
+        with cols[i]:
+            if st.button(f"✨ {title}\n{desc}", key=f"starter_{i}", use_container_width=True):
                 send_chat_message(prompt)
 
 else:
     # Render existing conversation logs
     for idx, msg in enumerate(messages):
-        with st.chat_message(msg["role"], avatar="✨" if msg["role"] == "assistant" else None):
+        avatar_img = ASSISTANT_AVATAR if msg["role"] == "assistant" else USER_AVATAR
+        with st.chat_message(msg["role"], avatar=avatar_img):
             st.markdown(msg["content"])
             
             # Helper actions for assistant responses
             if msg["role"] == "assistant":
-                col1, col2 = st.columns([2, 8])
-                
                 # Audio TTS trigger
-                if col1.button("🔊 Listen", key=f"tts_{idx}"):
+                if st.button("🔊 Listen", key=f"tts_{idx}"):
                     with st.spinner("Synthesizing audio..."):
                         try:
                             audio_res = requests.post(f"{BACKEND_URL}/api/media/tts", json={"text": msg["content"]})
@@ -294,18 +497,15 @@ if user_input:
     # If starting message, write immediately and rerun
     messages.append({"role": "user", "content": user_input})
     
-    # Update title
     if active_session["title"] == "New Chat":
         active_session["title"] = user_input[:25] + "..." if len(user_input) > 25 else user_input
         
     save_sessions(st.session_state.sessions)
     
-    # Display the new message immediately
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(user_input)
         
-    # Query backend via API
-    with st.chat_message("assistant", avatar="✨"):
+    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
         response_placeholder = st.empty()
         with st.spinner("Analyzing data inputs..."):
             try:
