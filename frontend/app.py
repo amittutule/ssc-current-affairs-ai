@@ -435,12 +435,23 @@ function initSpeech() {
             const textareas = window.parent.document.querySelectorAll('div[data-testid="stChatInput"] textarea');
             if (textareas.length > 0) {
                 const ta = textareas[0];
-                ta.value = transcript;
+                
+                // Force React state synchronization
+                const nativeValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                nativeValueSetter.call(ta, transcript);
                 ta.dispatchEvent(new Event('input', { bubbles: true }));
                 ta.focus();
+                
+                // Wait 100ms for React state sync, then trigger the submit click
+                setTimeout(() => {
+                    const sendBtns = window.parent.document.querySelectorAll('div[data-testid="stChatInput"] button');
+                    if (sendBtns.length > 0) {
+                        sendBtns[0].click();
+                    }
+                }, 100);
             }
         } catch (e) {
-            console.error("Failed to write transcript", e);
+            console.error("Failed to write and submit transcript", e);
         }
         stopListening();
     };
