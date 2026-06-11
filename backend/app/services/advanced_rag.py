@@ -352,7 +352,7 @@ def answer_generator_node(state: GraphState) -> Dict[str, Any]:
         prompt = (
             "You are an AI teaching assistant for the SSC Exam. Respond to the user's greeting "
             "or conversational chit-chat in a friendly, conversational, and helpful manner. "
-            "Briefly introduce yourself as the KarmaaFlow AI Current Affairs Tutor and invite them to ask "
+            "Briefly introduce yourself as the GetSmarter AI Current Affairs Tutor and invite them to ask "
             "questions about today's current affairs, news summaries, or competitive exam preparation strategy.\n\n"
             f"User message: {query}"
         )

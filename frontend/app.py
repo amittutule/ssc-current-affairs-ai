@@ -6,7 +6,7 @@ import time
 
 # 1. SETUP PAGE CONFIG & THEME
 st.set_page_config(
-    page_title="KarmaaFlow AI - Current Affairs Tutor",
+    page_title="GetSmarter AI - Current Affairs Tutor",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -15,8 +15,8 @@ st.set_page_config(
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 SESSIONS_FILE = "chat_sessions.json"
 
-# Custom KarmaaFlow Gradient "K" Logo (Base64 SVG)
-ASSISTANT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9InVybCgja2YtZ3JhZCkiLz48cGF0aCBkPSJNOCA3VjE3TTggMTJIMTAuNUwxNC41IDdNMTAuNSAxMkwxNSAxNyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0ia2YtZ3JhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMjQiIHkyPSIyNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2MzY2ZjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNmI2ZDQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4="
+# Custom GetSmarter Gradient "G" Logo (Base64 SVG)
+ASSISTANT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9InVybCgjZ3MtZ3JhZCkiLz48cGF0aCBkPSJNMTUgOS41QzE0LjIgOC42IDEzLjEgOCAxMS44IDhDOS4xIDggNyAxMC4yIDcgMTNDNyAxNS44IDkuMSAxOCAxMS44IDE4QzE0LjMgMTggMTYgMTYuMiAxNi41IDE0SDExLjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdzLWdyYWQiIHgxPSIwIiB5MT0iMCIgeDI9IjI0IiB5Mj0iMjQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNjM2NmYxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDZiNmQ0Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+"
 USER_AVATAR = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTIiIGN5PSI4IiByPSI0IiBmaWxsPSIjODA4NjhiIi8+PHBhdGggZD0iTTIwIDE5QzIwIDE1LjY4NjMgMTYuNDE4MyAxMyAxMiAxM0M3LjU4MTcyIDEzIDQgMTUuNjg2MyA0IDE5IiBzdHJva2U9IiM4MDg2OGIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+"
 
 # Inject Custom-branded Premium Layout Overrides
@@ -346,7 +346,7 @@ if "current_session_id" not in st.session_state:
         save_sessions(st.session_state.sessions)
 
 # 3. SIDEBAR NAVIGATION
-st.sidebar.markdown("<h2 style='color: #e3e3e3; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;'>✨ KarmaaFlow AI</h2>", unsafe_allow_html=True)
+st.sidebar.markdown("<h2 style='color: #e3e3e3; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;'>✨ GetSmarter AI</h2>", unsafe_allow_html=True)
 
 # Create a new session button
 st.sidebar.markdown('<div class="new-chat-btn-container">', unsafe_allow_html=True)
@@ -681,4 +681,4 @@ if user_input:
     save_sessions(st.session_state.sessions)
     st.rerun()
 
-st.markdown('<div class="disclaimer-text">KarmaaFlow AI can make mistakes. Verify important info.</div>', unsafe_allow_html=True)
+st.markdown('<div class="disclaimer-text">GetSmarter AI can make mistakes. Verify important info.</div>', unsafe_allow_html=True)
