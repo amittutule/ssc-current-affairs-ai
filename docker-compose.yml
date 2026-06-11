@@ -15,10 +15,10 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        - NEXT_PUBLIC_BACKEND_URL=http://$EC2_PUBLIC_IP:8000
     ports:
-      - "80:3000"
+      - "80:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
     depends_on:
       - backend
     restart: always
